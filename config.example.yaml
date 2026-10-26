@@ -1,0 +1,41 @@
+# ==============================================================================
+# agent-video-to-blog 配置文件
+# ==============================================================================
+
+# 1. Notion 博客数据库配置 (必填)
+# 用于将图文博客写入 Notion Database，自动对接 next-notion -> Hexo
+notion:
+  token: "${NOTION_TOKEN}"                  # Notion Integration Token (secret_xxx)
+  database_id: "${NOTION_DATABASE_ID}"      # 32 位 Database ID
+  default_status: "Draft"                  # 默认写入状态: "Draft" 或 "Published"
+  
+  # 字段名称映射 (根据你的 Notion Database 属性列名配置)
+  properties:
+    title: "Title"                          # 标题列名 (Title)
+    status: "Status"                        # 状态列名 (Select 或 Status)
+    tags: "Tags"                            # 标签列名 (Multi-select)
+    date: "Date"                            # 日期列名 (Date)
+    slug: "Slug"                            # 路径标识列名 (Text)
+
+# 2. ASR 语音识别配置 (针对抖音、小红书及无字幕视频)
+asr:
+  mode: "cloud"                             # 可选: "cloud" 或 "local"
+  
+  # 云端 ASR 方案 (推荐 Groq Whisper，免费极速免显卡)
+  cloud:
+    provider: "groq"                        # 可选: "groq" 或 "openai"
+    groq_api_key: "${GROQ_API_KEY}"        # 在 console.groq.com 免费获取
+    openai_api_key: "${OPENAI_API_KEY}"
+    model: "whisper-large-v3"
+
+  # 本地 ASR 方案 (离线、数据不出本地，需显存或 CPU)
+  local:
+    engine: "faster-whisper"                # 可选: "faster-whisper" 或 "sensevoice"
+    model_size: "small"                     # 可选: "tiny", "base", "small", "medium", "large-v3"
+    device: "auto"                          # 可选: "auto", "cpu", "cuda"
+
+# 3. 媒体与配图设置
+media:
+  enable_screenshot: true                   # 是否根据关键时间戳精准截取视频高清帧
+  max_screenshots: 4                        # 单篇博客最大自动配图数量
+  temp_dir: "/tmp/agent-video-to-blog"      # 临时文件存放目录
